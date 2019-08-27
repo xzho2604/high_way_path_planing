@@ -4,7 +4,7 @@
 ![alt text](42miles.png)
 
 #### The car is able to drive at least 4.32 miles without incident..
-The car can go the best record of 30 miles withou any inccidents
+The car can go the best record of 42 miles withou any inccidents as indicated in the pic above.
 
 #### The car drives according to the speed limit.
 The car never exceed the speed limit during its drive
