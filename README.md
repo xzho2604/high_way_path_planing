@@ -1,6 +1,7 @@
 # CarND-Path-Planning-Project
 ## Model Documentation
 ### Rubit Poins:
+![alt text](42miles.png)
 
 #### The car is able to drive at least 4.32 miles without incident..
 The car can go the best record of 30 miles withou any inccidents
@@ -53,10 +54,10 @@ we can not change to either left nor right lane then we keep staying in the lane
 When there is car infront of us within the saftey distance ,and is below the speed limit , we need to consider changin lanes.
 we will check all other cars that are in other lanes, if there is a distance of gap of both 30 metres in the front and back that at the end of the current path planing(other cars are estimated position at the same of the current car at the end of the path planning), then we could consider change lane. But here the planining result is based on the end of the previous path planing which is in the future, so we need to check as well right now if the condition is okay to change lane, as describled in line 176 -179 as well as 188-191.
 
-* Switch to middle lane:<br/
+* Switch to middle lane:<br/>
 When possible(condition allowed), we would prefer to stay in the middle lane ,since we have more options in the middle lane than in the other two lanes.
 
-* Middle lane switch to side lanes:<br/
+* Middle lane switch to side lanes:<br/>
 When we are in the middle lane , and there is option to swith to both lanes(both lane is okay to switch to as the logic describled previously), I have computed an average speed in each lane at the sensor fusion stage , in this situation we would prefer the lane with average speed that is faster or the lane with no car.(line 208 - 214)
 
 
