@@ -1,6 +1,54 @@
 # CarND-Path-Planning-Project
-Self-Driving Car Engineer Nanodegree Program
-   
+## Model Documentation
+### Rubit Poins:
+
+#### The car is able to drive at least 4.32 miles without incident..
+The car can go the best record of 30 miles withou any inccidents
+
+#### The car drives according to the speed limit.
+The car never exceed the speed limit during its drive
+
+#### Max Acceleration and Jerk are not Exceeded.
+No Max Acceleration and Jerk warning during the drive
+
+#### Car does not have collisions.
+Car does not collide with other cars on the road
+
+#### The car stays in its lane, except for the time between changing lanes.
+Car would stays in the middle of the lane unless lane changing
+
+#### The car is able to change lanes
+Car will change lane when the current traffic in the current lane is too slow
+
+
+### Path Generation:
+#### Minimise Jerk
+There are several to ensure that path genrated would be smooth
+* Use the past planning point for current path planning:
+I have include the past planning path that has not been excuted into the current path planing,kind of continue the path planing from the previous one , inducing the car yaw and volicity from the previous path as well as current car status so that the car trasition into this path planning would be smooth.
+
+* Using the spline libarary to generate very smooth path:
+To ensure the cure that spline libaray generate is smooth as possible, a spares spaced point has been choosen instead of all the points on the planning path. in this way the curve generated is much smoother.
+
+* The speed change difference at each unit of time:
+This parametre has been tuned so that the car's acceleration is niether too slow or too fast. To enable car to brake in time as well accelerate without jerk. With some epxperiments it turns out that 2.5 is the best option in line 118.
+
+#### Collision Avoidance
+Couple of strategies have been used to avoid collision with other vehicles most of them are applied to lane change stafty logic.
+* Keep Lane:
+Car will 
+
+
+
+
+
+
+
+
+
+
+
+
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).  
 
