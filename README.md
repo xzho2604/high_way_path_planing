@@ -34,9 +34,30 @@ To ensure the cure that spline libaray generate is smooth as possible, a spares 
 This parametre has been tuned so that the car's acceleration is niether too slow or too fast. To enable car to brake in time as well accelerate without jerk. With some epxperiments it turns out that 2.5 is the best option in line 118.
 
 #### Collision Avoidance
-Couple of strategies have been used to avoid collision with other vehicles most of them are applied to lane change stafty logic.
+Couple of strategies have been used to avoid collision with other vehicles most of them are applied to lane change stafty logic. There are some constant being defined as folow :
+```c++
+         // define some constants
+         const double BUF_DIS = 30; // buffer distance to keep with car in the front
+         const double MAX_SPEED = 49.5; // speed limit
+         const double SPEED_DEL = 0.25; // speed increase each time
+         const double LANE_WIDTH = 4; // speed increase each time
+         const double NUM_LANE = 3; // speed increase each time
+ 
+```
+
 * Keep Lane: <br/>
-Car will 
+Car will keep in the centre of the lane and drive at max speed allowed in normal cases. If there is car infront of our car and 
+we can not change to either left nor right lane then we keep staying in the lane with a safty margin of distance with the car infront of us. if we gets too close ,then we reduce the speed, if there is no car within the safty margin distantance and we are below the speed limit then we increase the speed. we define staty margine here as 30 metres
+
+* Change Left/Right: <br/>
+When there is car infront of us within the saftey distance ,and is below the speed limit , we need to consider changin lanes.
+we will check all other cars that are in other lanes, if there is a distance of gap of both 30 metres in the front and back that at the end of the current path planing(other cars are estimated position at the same of the current car at the end of the path planning), then we could consider change lane. But here the planining result is based on the end of the previous path planing which is in the future, so we need to check as well right now if the condition is okay to change lane, as describled in line 176 -179 as well as 188-191.
+
+* Switch to middle lane:<br/
+When possible(condition allowed), we would prefer to stay in the middle lane ,since we have more options in the middle lane than in the other two lanes.
+
+* Middle lane switch to side lanes:<br/
+When we are in the middle lane , and there is option to swith to both lanes(both lane is okay to switch to as the logic describled previously), I have computed an average speed in each lane at the sensor fusion stage , in this situation we would prefer the lane with average speed that is faster or the lane with no car.(line 208 - 214)
 
 
 ## 
