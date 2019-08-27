@@ -115,14 +115,21 @@ int main() {
          // define some constants
          const double BUF_DIS = 30; // buffer distance to keep with car in the front
          const double MAX_SPEED = 49.5; // speed limit
-         const double SPEED_DEL = 0.224; // speed increase each time
+         const double SPEED_DEL = 0.25; // speed increase each time
          const double LANE_WIDTH = 4; // speed increase each time
          const double NUM_LANE = 3; // speed increase each time
          
          // some flags for control
          bool front_close = false; // car infront too close
-         bool left_car = false; // left lane clear to go
-         bool right_car = false; // clear to go right
+         bool left_car = false; // if car in the left lane 
+         bool right_car = false; // if car in the right lane 
+
+         bool curr_left_car = false; // if currently car in the left lane 
+         bool curr_right_car = false; // if currently car inthe right lane 
+
+         // get average speed of other cars in each lane
+         std::map<int, double> lane_avg_speed{};
+         std::map<int, int> lane_car_count{};
 
          // loop through all cars detected on the same side of the road
          for(int i = 0; i<sensor_fusion.size();++i){
@@ -136,8 +143,7 @@ int main() {
              double check_speed = sqrt(vx*vx + vy*vy); // compute the car speed magnitude
              double check_car_s = sensor_fusion[i][5];
 
-             // if((check_car_s - car_s_copy) < 100 && (check_car_s - car_s_copy) > 0 )
-             //   follow_speed  = check_speed; 
+
 
              // if we use the previous unexcuted path planing point we can
              // project where the other cars are at the end of the planing planin 
@@ -147,6 +153,11 @@ int main() {
              
              // know where other cars detected are in which lane
              int other_car_lane = floor(d/4); // since lane is 4 metres wide
+
+             // record the car speed on its lane
+             lane_car_count[other_car_lane]++;
+             lane_avg_speed[other_car_lane] = check_car_s;
+
 
              // if the car is in the same lane
              // check if other car is ahdead of us and distance is less than a saftye margine
@@ -160,33 +171,56 @@ int main() {
             // check if that car is obscure our safty range to change lane
             if(other_car_lane - lane == -1) {
                 if(car_s - BUF_DIS < check_car_s && car_s + BUF_DIS > check_car_s) {
-                    // && curr_car_s - 10 < curr_check_car_s && curr_car_s + 10 > curr_check_car_s){
                      left_car = true;
                 }
+                // check if there is car currentl bolck the left lane before change lane
+                if(curr_car_s - 15 < curr_check_car_s && curr_car_s + 15 > curr_check_car_s){
+                    curr_left_car = true;
+                }
             }
-
             // if other car is in our right lane 
             if(other_car_lane - lane == 1) {
                if(car_s - BUF_DIS < check_car_s && car_s + BUF_DIS > check_car_s){
                  //  && curr_car_s - 10 < curr_check_car_s && curr_car_s + 10 > curr_check_car_s){
                     right_car = true;
                }
+
+                // check if there is car currentl bolck the right lane before change lane
+                if(curr_car_s - 15 < curr_check_car_s && curr_car_s + 15 > curr_check_car_s){
+                    curr_right_car = true;
+                }
+
             }
+         }
+         // calculate the average speed for each lane
+         for(int i= 0;i < NUM_LANE;++i){
+             lane_avg_speed[i] /= lane_car_count[i];
          }
 
          // by the end of the previous path planing if the other
          // car is ahead of us and less thant 30 metres with our car
          // we need to slow down to avoid collision
          if(front_close){
+             // if we are in the middle lane and can go both left and right lane
+             // pick the lane with larger speed
+             // if left lane average speed faster goes to left lane
+             // else gos to the right lane
+             if(!left_car && !curr_left_car && !right_car && !curr_right_car
+                 && lane == 1){
+                 if(lane_avg_speed[0] > lane_avg_speed[2] && lane_avg_speed[2] != 0){
+                     --lane;
+                 }else {
+                     ++lane;
+                }
              // left lane clear and our car not in left most lane change to left lane
-             if(!left_car && lane > 0){ 
+             }else if(!left_car && !curr_left_car && lane > 0){ 
                 --lane;
              // else if righ lane clear and our car not in the right most lane
-             }else if(!right_car && lane != 2) {
+             }else if(!right_car && !curr_right_car && lane != 2) {
                  ++lane;
              // can not go either righ or left keep in the lane and 
              // reduce speed to follow the car in the front
-             } else { 
+             } else if(ref_vel - SPEED_DEL >= 0){ 
                 ref_vel -= SPEED_DEL; // about 5 metres per second
              }
 
