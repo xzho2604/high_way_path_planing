@@ -1,5 +1,6 @@
 # CarND-Path-Planning-Project
 ## Model Documentation
+![alt text](demo.gif)
 ### Rubit Poins:
 ![alt text](42miles.png)
 
